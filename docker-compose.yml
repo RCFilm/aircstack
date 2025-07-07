@@ -48,7 +48,6 @@ services:
     container_name: dns-watcher
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "$HOME/.ssh:/root/.ssh:ro"
     environment:
       IONOS_API_KEY: "${IONOS_API_KEY}"
       ROOT_DOMAIN: "${DOMAIN}"
