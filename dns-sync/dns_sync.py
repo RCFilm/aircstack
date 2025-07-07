@@ -1,15 +1,28 @@
-"""Sync IONOS DNS A records with running Docker containers."""
+"""Sync DNS A records with running Docker containers."""
 
 import os
 import time
+import json
 import logging
 
 import docker
 import requests
 
-IONOS_API_KEY = os.getenv("IONOS_API_KEY")
-ROOT_DOMAIN = os.getenv("ROOT_DOMAIN")
-TARGET_IP = os.getenv("TARGET_IP")
+CONFIG_PATH = os.getenv("PROVIDER_CONFIG", "/config/provider.json")
+
+def load_config():
+    try:
+        with open(CONFIG_PATH) as fh:
+            return json.load(fh)
+    except FileNotFoundError:
+        return {}
+
+
+config = load_config()
+PROVIDER = config.get("provider", os.getenv("PROVIDER", "ionos"))
+IONOS_API_KEY = config.get("ionos_api_key", os.getenv("IONOS_API_KEY"))
+ROOT_DOMAIN = config.get("root_domain", os.getenv("ROOT_DOMAIN"))
+TARGET_IP = config.get("target_ip", os.getenv("TARGET_IP"))
 SYNC_INTERVAL = int(os.getenv("SYNC_INTERVAL", "60"))
 
 logging.basicConfig(
@@ -19,8 +32,7 @@ logging.basicConfig(
 
 if not all([IONOS_API_KEY, ROOT_DOMAIN, TARGET_IP]):
     raise RuntimeError(
-        "Missing one of IONOS_API_KEY, ROOT_DOMAIN or TARGET_IP "
-        "environment variables"
+        "DNS provider settings missing: api key, domain or target IP"
     )
 
 HEADERS = {"X-API-Key": IONOS_API_KEY, "Content-Type": "application/json"}

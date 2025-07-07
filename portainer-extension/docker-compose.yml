@@ -5,6 +5,7 @@ services:
     container_name: portainer_extension_control
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ../config:/config
     environment:
       DOMAIN: "${DOMAIN}"
     ports:

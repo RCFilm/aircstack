@@ -1,0 +1,6 @@
+{
+  "provider": "ionos",
+  "ionos_api_key": "your_ionos_api_key",
+  "root_domain": "example.com",
+  "target_ip": "1.2.3.4"
+}
