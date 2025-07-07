@@ -10,18 +10,25 @@ import requests
 IONOS_API_KEY = os.getenv("IONOS_API_KEY")
 ROOT_DOMAIN = os.getenv("ROOT_DOMAIN")
 TARGET_IP = os.getenv("TARGET_IP")
+SYNC_INTERVAL = int(os.getenv("SYNC_INTERVAL", "60"))
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s",
+)
 
 if not all([IONOS_API_KEY, ROOT_DOMAIN, TARGET_IP]):
-    raise RuntimeError("Missing one of IONOS_API_KEY, ROOT_DOMAIN or TARGET_IP environment variables")
+    raise RuntimeError(
+        "Missing one of IONOS_API_KEY, ROOT_DOMAIN or TARGET_IP "
+        "environment variables"
+    )
 
 HEADERS = {"X-API-Key": IONOS_API_KEY, "Content-Type": "application/json"}
 
 
 def _request(method: str, url: str, **kwargs):
     """Helper performing HTTP requests with error handling."""
-    resp = requests.request(method, url, headers=HEADERS, **kwargs)
+    resp = requests.request(method, url, headers=HEADERS, timeout=10, **kwargs)
     try:
         data = resp.json()
     except ValueError:
@@ -34,6 +41,7 @@ def _request(method: str, url: str, **kwargs):
 
     return data
 
+
 def get_zone_id() -> str:
     """Return the zone id for ``ROOT_DOMAIN``."""
     zones = _request("GET", "https://api.hosting.ionos.com/dns/v1/zones")
@@ -41,6 +49,7 @@ def get_zone_id() -> str:
         if zone.get("name") == ROOT_DOMAIN:
             return zone.get("id")
     raise RuntimeError(f"Zone {ROOT_DOMAIN} not found")
+
 
 def sync_dns():
     """Synchronize DNS records with running containers."""
@@ -56,7 +65,9 @@ def sync_dns():
             subdomains.add(domain)
 
     # Get current DNS records
-    zone_info = _request("GET", f"https://api.hosting.ionos.com/dns/v1/zones/{zone_id}")
+    zone_info = _request(
+        "GET", f"https://api.hosting.ionos.com/dns/v1/zones/{zone_id}"
+    )
     current_records = zone_info.get("records", [])
     current_subs = {
         rec.get("name"): rec.get("id")
@@ -76,20 +87,20 @@ def sync_dns():
                 "prio": 0,
                 "disabled": False,
             }]
-            _request(
-                "POST",
-                f"https://api.hosting.ionos.com/dns/v1/zones/{zone_id}/records",
-                json=payload,
+            records_url = (
+                f"https://api.hosting.ionos.com/dns/v1/zones/{zone_id}/records"
             )
+            _request("POST", records_url, json=payload)
 
     # Remove stale records
     for name, rid in current_subs.items():
         if name not in subdomains:
             logging.info("Deleting stale DNS record %s", name)
-            _request(
-                "DELETE",
-                f"https://api.hosting.ionos.com/dns/v1/zones/{zone_id}/records/{rid}",
+            records_url = (
+                f"https://api.hosting.ionos.com/dns/v1/zones/{zone_id}/records"
             )
+            _request("DELETE", f"{records_url}/{rid}")
+
 
 if __name__ == "__main__":
     while True:
@@ -97,4 +108,4 @@ if __name__ == "__main__":
             sync_dns()
         except Exception as exc:  # pragma: no cover - top-level loop
             logging.exception("Error during sync: %s", exc)
-        time.sleep(60)
+        time.sleep(SYNC_INTERVAL)

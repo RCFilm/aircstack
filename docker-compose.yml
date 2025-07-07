@@ -54,5 +54,19 @@ services:
       TARGET_IP: "${TARGET_IP}"
     restart: always
 
+  control-panel:
+    build: ./control-panel
+    container_name: control-panel
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      DOMAIN: "${DOMAIN}"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.control.rule=Host(`control.${DOMAIN}`)"
+      - "traefik.http.routers.control.entrypoints=websecure"
+      - "traefik.http.routers.control.tls.certresolver=le"
+      - "traefik.domain=control.${DOMAIN}"
+
 volumes:
   portainer_data:

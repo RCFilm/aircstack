@@ -1,0 +1,18 @@
+{
+  "version": "2",
+  "name": "Reverse Proxy Control",
+  "provider": "AircStack",
+  "icon": "logo.svg",
+  "vm": {
+    "composefile": "docker-compose.yml",
+    "exposes": { "socket": "docker.sock" }
+  },
+  "ui": {
+    "dashboard-tab": {
+      "title": "Proxy Control",
+      "root": "/",
+      "src": "index.html",
+      "backend": { "tcp": "5000" }
+    }
+  }
+}
