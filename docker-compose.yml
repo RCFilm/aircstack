@@ -53,6 +53,7 @@ services:
       IONOS_API_KEY: "${IONOS_API_KEY}"
       ROOT_DOMAIN: "${DOMAIN}"
       TARGET_IP: "${TARGET_IP}"
+      SYNC_INTERVAL: "${SYNC_INTERVAL:-60}"
     restart: always
 
 volumes:

@@ -1,8 +1,16 @@
-"""Sync IONOS DNS A records with running Docker containers."""
+"""Sync IONOS DNS A records with running Docker containers.
+
+Environment variables:
+    IONOS_API_KEY: API token for IONOS
+    ROOT_DOMAIN:   domain zone to manage
+    TARGET_IP:     IP address for created records
+    SYNC_INTERVAL: optional default interval in seconds
+"""
 
 import os
 import time
 import logging
+import argparse
 
 import docker
 import requests
@@ -10,6 +18,7 @@ import requests
 IONOS_API_KEY = os.getenv("IONOS_API_KEY")
 ROOT_DOMAIN = os.getenv("ROOT_DOMAIN")
 TARGET_IP = os.getenv("TARGET_IP")
+DEFAULT_INTERVAL = int(os.getenv("SYNC_INTERVAL", "60"))
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
@@ -91,10 +100,33 @@ def sync_dns():
                 f"https://api.hosting.ionos.com/dns/v1/zones/{zone_id}/records/{rid}",
             )
 
-if __name__ == "__main__":
+def main() -> None:
+    """Run the synchronization loop or a one-shot sync."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--interval",
+        type=int,
+        default=DEFAULT_INTERVAL,
+        help="seconds between sync runs (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--once",
+        action="store_true",
+        help="run a single sync and exit",
+    )
+    args = parser.parse_args()
+
+    if args.once:
+        sync_dns()
+        return
+
     while True:
         try:
             sync_dns()
         except Exception as exc:  # pragma: no cover - top-level loop
             logging.exception("Error during sync: %s", exc)
-        time.sleep(60)
+        time.sleep(args.interval)
+
+
+if __name__ == "__main__":
+    main()
