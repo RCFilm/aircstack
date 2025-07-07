@@ -31,11 +31,14 @@ services:
     image: portainer/portainer-ce:latest
     container_name: portainer
     command: -H unix:///var/run/docker.sock
+    environment:
+      - EXTENSIONS=reverse-proxy
     ports:
       - "9000:9000"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "portainer_data:/data"
+      - "./portainer-extension:/extensions/reverse-proxy"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN}`)"
@@ -48,10 +51,7 @@ services:
     container_name: dns-watcher
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
-    environment:
-      IONOS_API_KEY: "${IONOS_API_KEY}"
-      ROOT_DOMAIN: "${DOMAIN}"
-      TARGET_IP: "${TARGET_IP}"
+      - "./config:/config"
     restart: always
 
   control-panel:
@@ -59,6 +59,7 @@ services:
     container_name: control-panel
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./config:/config"
     environment:
       DOMAIN: "${DOMAIN}"
     labels:

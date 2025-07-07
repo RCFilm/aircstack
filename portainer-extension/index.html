@@ -15,14 +15,18 @@
 </head>
 <body>
     <h1>Reverse Proxy Control Panel</h1>
+    <p><a href="/settings">DNS Provider Settings</a></p>
+    <p>Toggle public routing for your running containers. If you enable a
+        container without entering a subdomain, its name will be used
+        automatically.</p>
     <form method="post" action="/update">
         <table>
-            <tr><th>Container</th><th>Expose</th><th>Subdomain</th></tr>
+            <tr><th>Container</th><th>Public</th><th>Subdomain</th></tr>
             {% for c in containers %}
             <tr>
                 <td>{{ c.name }}</td>
-                <td><input type="checkbox" name="enable_{{ c.id }}" {% if c.enabled %}checked{% endif %}></td>
-                <td><input type="text" name="sub_{{ c.id }}" placeholder="sub" value="{{ c.subdomain }}"></td>
+                <td><input type="checkbox" data-name="{{ c.name }}" name="enable_{{ c.id }}" {% if c.enabled %}checked{% endif %}></td>
+                <td><input type="text" name="sub_{{ c.id }}" placeholder="e.g. app" value="{{ c.subdomain }}"></td>
             </tr>
             {% endfor %}
         </table>
@@ -37,8 +41,21 @@
             const text = await r.text();
             document.getElementById('log').textContent = text;
         }
+        function autoFill() {
+            document.querySelectorAll('input[name^="enable_"]').forEach(cb => {
+                const id = cb.name.slice(7);
+                const input = document.querySelector(`input[name="sub_${id}"]`);
+                if (cb.checked && input && !input.value) {
+                    input.value = cb.dataset.name;
+                }
+            });
+        }
+        document.querySelectorAll('input[name^="enable_"]').forEach(cb => {
+            cb.addEventListener('change', autoFill);
+        });
         setInterval(fetchLog, 3000);
         fetchLog();
+        autoFill();
     </script>
 </body>
 </html>
