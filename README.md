@@ -9,9 +9,6 @@ A Docker-native reverse proxy with DNS auto-sync for IONOS.
 - 🧠 Detects containers using Docker label: \`traefik.domain\`
 - 🪵 Detailed logging and robust error handling in the DNS sync service
 
-## SSH Key for GitHub
-
-This script checks for or generates \`~/.ssh/aircstack\` for SSH-based GitHub access. Add \`aircstack.pub\` to your GitHub SSH keys.
 
 ## Usage
 
