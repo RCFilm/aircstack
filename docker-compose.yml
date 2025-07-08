@@ -25,24 +25,15 @@ services:
       - "traefik.http.routers.api.service=api@internal"
       - "traefik.http.routers.api.tls.certresolver=le"
 
-  portainer:
-    image: portainer/portainer-ce:2.18.4
-    container_name: portainer
-    command: -H unix:///var/run/docker.sock
-    environment:
-      - EXTENSIONS=/extensions/proxycontrol
-    ports:
-      - "9000:9000"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      - "portainer_data:/data"
-      - "./proxycontrol:/extensions/proxycontrol"
+  aircstack-ui:
+    build: ./docker-dashboard-ui
+    container_name: aircstack-ui
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN}`)"
-      - "traefik.http.routers.portainer.entrypoints=websecure"
-      - "traefik.http.routers.portainer.tls.certresolver=le"
-      - "traefik.domain=portainer.${DOMAIN}"
+      - "traefik.http.routers.aircstack.rule=Host(`dashboard.${DOMAIN}`)"
+      - "traefik.http.routers.aircstack.entrypoints=websecure"
+      - "traefik.http.routers.aircstack.tls.certresolver=le"
+      - "traefik.domain=dashboard.${DOMAIN}"
 
   dns-watcher:
     build: ./dns-sync
@@ -66,6 +57,3 @@ services:
       - "traefik.http.routers.control.entrypoints=websecure"
       - "traefik.http.routers.control.tls.certresolver=le"
       - "traefik.domain=control.${DOMAIN}"
-
-volumes:
-  portainer_data:
