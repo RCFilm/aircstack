@@ -51,3 +51,8 @@ app on port 5000. The extension also adds a **DNS Provider** item under
 Portainer's **Settings** side menu where you can manage API credentials and the
 target IP. When exposing a container, leaving the subdomain blank will default
 it to the container name.
+
+**Important:** Starting with Portainer 2.19, the Community Edition no longer
+loads local extensions. This stack pins `portainer/portainer-ce:2.18.4` so the
+Proxy Control extension remains visible. If you need a newer Portainer release,
+consider the Business Edition instead.
