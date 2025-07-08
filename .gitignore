@@ -2,3 +2,5 @@
 __pycache__/
 letsencrypt/
 config/provider.json
+docker-dashboard-ui/node_modules/
+docker-dashboard-ui/dist/
