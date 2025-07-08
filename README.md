@@ -21,10 +21,11 @@ A Docker-native reverse proxy with DNS auto-sync for IONOS (or other providers).
 # edit config/provider.json with your DNS provider credentials
    \`\`\`
 
-2. Launch the stack:
+2. Launch the stack with the interactive script:
    \`\`\`
-   docker compose up --build -d
+   ./start.sh
    \`\`\`
+Choose an option to build or rebuild the containers as needed.
 
 The DNS watcher service is built from `dns-sync/Dockerfile` and will
 periodically ensure A records exist for containers that specify the
