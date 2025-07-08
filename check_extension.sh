@@ -15,7 +15,7 @@ if ! docker ps -q -f name="^${CONTAINER}$" | grep -q .; then
   exit 1
 fi
 
-if docker exec "$CONTAINER" /bin/sh -c "test -f $EXT_DIR/metadata.json"; then
+if docker exec "$CONTAINER" test -f "$EXT_DIR/metadata.json"; then
   echo "Extension is mounted"
 else
   echo "Extension not found at $EXT_DIR" >&2
