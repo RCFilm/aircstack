@@ -30,13 +30,13 @@ services:
     container_name: portainer
     command: -H unix:///var/run/docker.sock
     environment:
-      - EXTENSIONS=/extensions/reverse-proxy
+      - EXTENSIONS=/extensions/proxycontrol
     ports:
       - "9000:9000"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "portainer_data:/data"
-      - "./portainer-extension:/extensions/reverse-proxy"
+      - "./proxycontrol:/extensions/proxycontrol"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN}`)"
