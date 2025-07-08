@@ -57,9 +57,15 @@ loads local extensions. This stack pins `portainer/portainer-ce:2.18.4` so the
 Proxy Control extension remains visible. If you need a newer Portainer release,
 consider the Business Edition instead.
 
-
 If you started Portainer previously without the extension mounted, the
 `portainer_data` volume may cache the old state and hide the extension even
 after updating the stack. Run `./start.sh` and choose the option to purge
 volumes (or manually `docker compose down -v && docker volume rm
 aircstack_portainer_data`) to recreate the volume and load the extension.
+
+
+If the extension still doesn't show up after purging, exec into the
+`portainer` container and check that `/extensions/reverse-proxy/metadata.json`
+exists. If it doesn't, ensure the `portainer-extension` folder is accessible
+and the `EXTENSIONS` variable in `docker-compose.yml` points to that path.
+
