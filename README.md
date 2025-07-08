@@ -44,7 +44,9 @@ containers and inspect the live log from the DNS watcher.
 ### Portainer extension
 
 The stack ships with a Portainer extension for the control panel. It is mounted
-into Portainer automatically so no manual import is required. As soon as the
-stack starts, the "Proxy Control" tab is available in Portainer running the
-same Flask app on port 5000. When exposing a container, leaving the subdomain
-blank will default it to the container name.
+into Portainer automatically so no manual import is required. Once the stack
+starts, the **Proxy Control** tab will appear in Portainer using the same Flask
+app on port 5000. The extension also adds a **DNS Provider** item under
+Portainer's **Settings** side menu where you can manage API credentials and the
+target IP. When exposing a container, leaving the subdomain blank will default
+it to the container name.
