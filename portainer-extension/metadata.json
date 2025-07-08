@@ -13,6 +13,12 @@
       "root": "/",
       "src": "index.html",
       "backend": { "tcp": "5000" }
+    },
+    "settings": {
+      "title": "DNS Provider",
+      "root": "/settings",
+      "src": "settings.html",
+      "backend": { "tcp": "5000" }
     }
   }
 }
