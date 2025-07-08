@@ -63,6 +63,7 @@ after updating the stack. Run `./start.sh` and choose the option to purge
 volumes (or manually `docker compose down -v && docker volume rm
 aircstack_portainer_data`) to recreate the volume and load the extension.
 
+
 If the extension still doesn't show up after purging, exec into the
 `portainer` container and check that `/extensions/proxycontrol/metadata.json`
 exists. Use `/bin/sh` (not just `sh`) as the Portainer image is minimal:
@@ -70,7 +71,10 @@ exists. Use `/bin/sh` (not just `sh`) as the Portainer image is minimal:
 ```bash
 docker exec -it portainer /bin/sh -c 'ls -l /extensions/proxycontrol'
 ```
-
 If the directory is missing, make sure you're running `docker compose` from the
-repository root so the `./proxycontrol` path resolves correctly. The
+repository root so the `./portainer-extension` path resolves correctly. The
 `EXTENSIONS` variable in `docker-compose.yml` must point to this location.
+
+If the extension still doesn't show up after purging, exec into the
+`portainer` container and check that `/extensions/reverse-proxy/metadata.json`
+exists. If it doesn't, ensure the `portainer-extension` folder is accessible
