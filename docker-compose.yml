@@ -28,7 +28,7 @@ services:
       - "traefik.http.routers.api.tls.certresolver=le"
 
   portainer:
-    image: portainer/portainer-ce:latest
+    image: portainer/portainer-ce:2.18.4
     container_name: portainer
     command: -H unix:///var/run/docker.sock
     environment:
