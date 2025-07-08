@@ -71,10 +71,18 @@ exists. Use `/bin/sh` (not just `sh`) as the Portainer image is minimal:
 ```bash
 docker exec -it portainer /bin/sh -c 'ls -l /extensions/proxycontrol'
 ```
+
 If the directory is missing, make sure you're running `docker compose` from the
-repository root so the `./portainer-extension` path resolves correctly. The
+repository root so the `./proxycontrol` path resolves correctly. The
 `EXTENSIONS` variable in `docker-compose.yml` must point to this location.
 
+You can also run the helper script to verify the mount:
+
+```bash
+./check_extension.sh
+```
+
 If the extension still doesn't show up after purging, exec into the
-`portainer` container and check that `/extensions/reverse-proxy/metadata.json`
-exists. If it doesn't, ensure the `portainer-extension` folder is accessible
+`portainer` container and check that `/extensions/proxycontrol/metadata.json`
+exists. If it doesn't, ensure the `proxycontrol` folder is accessible and
+that the `EXTENSIONS` variable in `docker-compose.yml` points to that path.
